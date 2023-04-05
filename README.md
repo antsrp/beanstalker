@@ -8,15 +8,13 @@ make run
 ```
 
 Also parameters host and port for the queue can also be changed (hereinafter **run-options**):
-
-```
-*only host*  
+<pre><code><i>*only host*</i>
 make run host=somehost
-*only port*  
+<i>*only port*</i>
 make run port=123
-*both*  
+<i>*both*</i>
 make run host=somehost port=123
-```
+</code></pre>
 
 build:
 ```
@@ -24,14 +22,10 @@ make build
 ```
 
 build and run:
-```
-make build-run <*run-options...*>
-```
+<pre><code>make build-run <i><*run-options...*></i></code></pre>
 
 run already builded earlier:
-```
-make run-builded <*run-options...*>
-```
+<pre><code>make run-builded <i><*run-options...*></i></code></pre>
 
 ## Commands
 
@@ -55,21 +49,15 @@ set ttr=$value
 set priority=$value
 ```
 
-- Changing multiple options via a single set:
-```
-set tube=$name delay=$value ttr=$value priority=$value
+- Changing multiple options via a single set:  
+<pre><code>set tube=$name delay=$value ttr=$value priority=$value  
 set tube=$name priority=$value
-*etc...*
-```
+<i>*etc...*</i></code></pre>
 
 3. **Put data**
 
 - From console
-```
-put -d data...
-```
+<pre><code>put -d <i>data...</i></code></pre>
 
 - From file
-```
-put -f path/to/file
-```
+<pre><code>put -f <i>path/to/file</i></code></pre>
