@@ -10,8 +10,8 @@ import (
 	"github.com/antsrp/beanstalker/config"
 	"github.com/antsrp/beanstalker/usecases/events"
 	"github.com/antsrp/beanstalker/usecases/queue"
+	"github.com/antsrp/beanstalker/usecases/visual"
 
-	"github.com/TwiN/go-color"
 	"github.com/urfave/cli/v2"
 	"go-micro.dev/v4"
 )
@@ -66,12 +66,12 @@ func main() {
 			}
 			res, err := listener.Parse(s)
 			if err != nil {
-				fmt.Println(color.Ize(color.Red, err.Error()))
+				fmt.Println(visual.Colorize(visual.ColorRed, err.Error()))
 			} else {
 				if res != nil {
-					fmt.Println(color.Ize(color.Cyan, *res))
+					fmt.Println(*res)
 				} else {
-					fmt.Println(color.Ize(color.Cyan, "OK"))
+					fmt.Println(visual.Colorize(visual.ColorCyan, "OK"))
 				}
 			}
 		}

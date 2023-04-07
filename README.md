@@ -61,3 +61,11 @@ set tube=$name priority=$value
 
 - From file
 <pre><code>put -f <i>path/to/file</i></code></pre>
+
+4. **Stats**
+
+- All tubes
+<pre><code>stats</code></pre>
+
+- Single tube
+<pre><code>stats <i>tubename</i></code></pre>

@@ -7,6 +7,7 @@ import (
 
 	"github.com/antsrp/beanstalker/config"
 	iqueue "github.com/antsrp/beanstalker/interfaces/queue"
+	"github.com/antsrp/beanstalker/usecases/visual"
 
 	"github.com/beanstalkd/go-beanstalk"
 )
@@ -63,7 +64,7 @@ func (p Producer) Put(data []byte) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("ERROR: %w", err)
 	}
-	return fmt.Sprintf("INSERTED %v\n", id), nil
+	return visual.Colorize(visual.ColorCyan, fmt.Sprintf("\r\nINSERTED %v\r\n", id)), nil
 }
 
 func (p Producer) ListTubes() (string, error) {
@@ -71,7 +72,50 @@ func (p Producer) ListTubes() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("ERROR: %w", err)
 	}
-	return "Tubes\r\n" + strings.Join(strs, "\r\n"), nil
+	return visual.Colorize(visual.ColorCyan, "Tubes:\r\n") + visual.Colorize(visual.ColorGreen, strings.Join(strs, "\r\n")), nil
+}
+
+func (p Producer) getTubeStats(tube *beanstalk.Tube) (map[string]string, error) {
+	stats, err := tube.Stats()
+	if err != nil {
+		return nil, fmt.Errorf("can't get stats of tube: %w", err)
+	}
+	return stats, nil
+}
+
+func (p Producer) selectTube(name string) *beanstalk.Tube {
+	return beanstalk.NewTube(p.conn, name)
+}
+
+func (p Producer) gatherTubesStats(names ...string) (string, error) {
+	var sb strings.Builder
+	for _, name := range names {
+		t := p.selectTube(name)
+		stats, err := p.getTubeStats(t)
+		if err != nil {
+			return "", fmt.Errorf("can't get stats of tube: %w", err)
+		}
+		sb.WriteString(visual.Colorize(visual.ColorGreen, fmt.Sprintf("\r\ntube: %s\r\n", name)))
+		for k, v := range stats {
+			if k == "name" {
+				continue
+			}
+			sb.WriteString(fmt.Sprintf("%s: %s\n", visual.Colorize(visual.ColorCyan, k), visual.Colorize(visual.ColorRed, v)))
+		}
+	}
+	return sb.String(), nil
+}
+
+func (p Producer) StatsTubes() (string, error) {
+	names, err := p.conn.ListTubes()
+	if err != nil {
+		return "", err
+	}
+	return p.gatherTubesStats(names...)
+}
+
+func (p Producer) StatsTube(tube string) (string, error) {
+	return p.gatherTubesStats(tube)
 }
 
 func (p *Producer) Close() {
