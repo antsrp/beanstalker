@@ -16,9 +16,10 @@ import (
 type Command string
 
 const (
-	SET  Command = "set"
-	LIST Command = "list"
-	PUT  Command = "put"
+	SET   Command = "set"
+	LIST  Command = "list"
+	PUT   Command = "put"
+	STATS Command = "stats"
 )
 
 type Option string
@@ -199,7 +200,6 @@ func (l Listener) Parse(s string) (*string, error) {
 		case PUT_FROM_CONSOLE:
 			value := strings.Join(arr[2:], " ")
 			data := []byte(value)
-			fmt.Println("string: ", string(data))
 			if res, err := l.producer.Put(data); err != nil {
 				return nil, err
 			} else {
@@ -218,6 +218,18 @@ func (l Listener) Parse(s string) (*string, error) {
 		default:
 			return nil, fmt.Errorf("%w: %s", ErrUnknownOption, key)
 		}
+	case STATS:
+		var res string
+		var err error
+		if ln <= 1 {
+			res, err = l.producer.StatsTubes()
+		} else {
+			res, err = l.producer.StatsTube(arr[1])
+		}
+		if err != nil {
+			return nil, err
+		}
+		return &res, nil
 	default:
 		return nil, fmt.Errorf("%w: %s", ErrUnknownCommand, cmd)
 	}
